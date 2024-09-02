@@ -2,7 +2,7 @@
 // @name         anti-anti-inspect
 // @namespace    https://github.com/asrvn/anti-anti-inspect
 // @description  Bypass right-click and keyboard shortcuts blocking on websites.
-// @version      1.2
+// @version      1.3
 // @author       asrvn
 // @match        *://*/*
 // @grant        none
@@ -12,25 +12,33 @@
 // ==/UserScript==
 
 (function() {
+
     'use strict';
 
-    // Remove inline blocking of right-click and keyboard shortcuts
-    document.oncontextmenu = null;
-    document.onkeydown = null;
+    // Helper function to remove event listeners safely
+    function removeEventListeners(eventName) {
 
-    // Ensure all event listeners are removed after page load
-    window.addEventListener('load', function() {
-        document.body.removeEventListener('contextmenu', document.oncontextmenu);
-        document.body.removeEventListener('keydown', document.onkeydown);
-    }, true);
+        // Clone the original body to remove all inline event listeners
+        const clone = document.body.cloneNode(true);
+        document.body.parentNode.replaceChild(clone, document.body);
 
-    // Stop propagation and default actions for context menu and keydown events
-    window.addEventListener('keydown', function(event) {
-        event.stopPropagation();
-    }, true);
+        // Reassign body element for further manipulations
+        document.body = clone;
 
-    window.addEventListener('contextmenu', function(event) {
-        event.stopPropagation();
-    }, true);
+        // Remove specific event listeners added by JavaScript
+        const events = ['contextmenu', 'keydown'];
+        events.forEach((evt) => {
+            window.addEventListener(evt, function(event) {
+                if (eventName === evt) {
+                    event.stopImmediatePropagation();
+                }
+            }, true);
+        });
+
+    }
+
+    // Remove right-click and keydown blocking
+    removeEventListeners('contextmenu');
+    removeEventListeners('keydown');
 
 })();
