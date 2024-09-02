@@ -2,7 +2,7 @@
 // @name         anti-anti-inspect
 // @namespace    https://github.com/asrvn/anti-anti-inspect
 // @description  Bypass right-click and keyboard shortcuts blocking on websites.
-// @version      1.4
+// @version      1.5
 // @author       asrvn
 // @match        *://*/*
 // @grant        none
@@ -12,33 +12,46 @@
 (function() {
     'use strict';
 
-    // Function to re-enable right-click
-    function enableRightClick(event) {
-
-        event.stopImmediatePropagation(); // Stop the event from reaching the original listener
-        return true; // Allow default behavior
-
+    // Helper function to remove specific event listeners
+    function removeEventListeners(element, type) {
+        let clone = element.cloneNode(true);
+        element.parentNode.replaceChild(clone, element);
     }
 
-    // Function to re-enable keyboard shortcuts
-    function enableShortcuts(event) {
+    // Remove event listeners for right-click and keyboard shortcuts
+    function restoreDefaultActions() {
+        removeEventListeners(document, 'contextmenu');
+        removeEventListeners(document, 'keydown');
+        removeEventListeners(document, 'keypress');
+        removeEventListeners(document, 'keyup');
+    }
 
-        const forbiddenKeys = [123, 'I'.charCodeAt(0), 'C'.charCodeAt(0), 'J'.charCodeAt(0), 'U'.charCodeAt(0)]; // F12, 'I', 'C', 'J', 'U'
-
-        // Allow default actions for F12, Ctrl+Shift+I/C/J/U
-        if (
-            (event.keyCode === 123) || // F12
-            (event.ctrlKey && event.shiftKey && forbiddenKeys.includes(event.keyCode)) || // Ctrl+Shift+I/C/J
-            (event.ctrlKey && event.keyCode === 'U'.charCodeAt(0)) // Ctrl+U
-        ) {
-            event.stopImmediatePropagation(); // Stop the event from reaching the original listener
-            return true; // Allow default behavior
+    // Override addEventListener to prevent blocking event listeners from being added
+    const originalAddEventListener = EventTarget.prototype.addEventListener;
+    EventTarget.prototype.addEventListener = function(type, listener, options) {
+        if (type === 'contextmenu' || type === 'keydown' || type === 'keypress' || type === 'keyup') {
+            console.log(`Blocked adding event listener for ${type}`);
+            return; // Block the addition of the listener
         }
+        originalAddEventListener.call(this, type, listener, options);
+    };
 
-    }
+    // MutationObserver to monitor DOM changes and remove blocking event listeners dynamically
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length) {
+                restoreDefaultActions();
+            }
+        });
+    });
 
-    // Add event listeners to restore functionality
-    document.addEventListener('contextmenu', enableRightClick, true); // Use capture phase to override
-    document.addEventListener('keydown', enableShortcuts, true); // Use capture phase to override
+    observer.observe(document, { childList: true, subtree: true });
+
+    // Restore default actions on page load
+    window.addEventListener('DOMContentLoaded', restoreDefaultActions);
+    window.addEventListener('load', restoreDefaultActions);
+
+    // Initial call to remove any event listeners that may already be set
+    restoreDefaultActions();
 
 })();
