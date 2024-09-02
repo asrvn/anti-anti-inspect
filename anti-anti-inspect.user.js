@@ -2,7 +2,7 @@
 // @name         anti-anti-inspect
 // @namespace    https://github.com/asrvn/anti-anti-inspect
 // @description  Bypass right-click and keyboard shortcuts blocking on websites.
-// @version      1.0
+// @version      1.1
 // @author       asrvn
 // @match        *://*/*
 // @grant        none
