@@ -27,12 +27,10 @@
     // Stop propagation and default actions for context menu and keydown events
     window.addEventListener('keydown', function(event) {
         event.stopPropagation();
-        event.preventDefault();
     }, true);
 
     window.addEventListener('contextmenu', function(event) {
         event.stopPropagation();
-        event.preventDefault();
     }, true);
 
 })();
