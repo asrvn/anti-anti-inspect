@@ -7,8 +7,8 @@
 // @match        *://*/*
 // @grant        none
 // @run-at       document-end
-// @downloadURL  https://github.com/asrvn/anti-anti-inspect/blob/main/anti-anti-inspect.user.js
-// @updateURL    https://github.com/asrvn/anti-anti-inspect/blob/main/anti-anti-inspect.user.js
+// @downloadURL  https://github.com/asrvn/anti-anti-inspect/blob/main/experimental/anti-anti-everything.user.js
+// @updateURL    https://github.com/asrvn/anti-anti-inspect/blob/main/experimental/anti-anti-everything.user.js
 // ==/UserScript==
 
 (function() {
