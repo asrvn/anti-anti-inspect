@@ -1,42 +1,38 @@
 // ==UserScript==
 // @name         anti-anti-inspect
-// @description  Certain websites prevent inspection and viewing source content. This script bypasses it.
+// @namespace    https://github.com/asrvn/anti-anti-inspect
+// @description  Bypass right-click and keyboard shortcuts blocking on websites.
 // @version      1.0
-// @description  Bypass scripts that disable right-click and keyboard shortcuts
 // @author       asrvn
 // @match        *://*/*
 // @grant        none
+// @run-at       document-end
+// @downloadURL  https://github.com/asrvn/anti-anti-inspect/blob/main/anti-anti-inspect.user.js
+// @updateURL    https://github.com/asrvn/anti-anti-inspect/blob/main/anti-anti-inspect.user.js
 // ==/UserScript==
 
 (function() {
-
     'use strict';
 
-    // Enable right-click
+    // Remove inline blocking of right-click and keyboard shortcuts
     document.oncontextmenu = null;
-
-    // Remove any onkeydown event listener set on the document
     document.onkeydown = null;
 
-    // Alternatively, to ensure all event listeners are removed:
+    // Ensure all event listeners are removed after page load
     window.addEventListener('load', function() {
-
         document.body.removeEventListener('contextmenu', document.oncontextmenu);
         document.body.removeEventListener('keydown', document.onkeydown);
-
     }, true);
 
-    // For modern browsers, using removeEventListener is more reliable
+    // Stop propagation and default actions for context menu and keydown events
     window.addEventListener('keydown', function(event) {
-
         event.stopPropagation();
-
+        event.preventDefault();
     }, true);
 
     window.addEventListener('contextmenu', function(event) {
-
         event.stopPropagation();
-
+        event.preventDefault();
     }, true);
 
 })();
